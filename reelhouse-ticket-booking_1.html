@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reelhouse — Book your seat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.44.0/tabler-icons.min.css">
+<style>
+  :root{
+    --bg: #14121F;
+    --bg-deep: #0D0B15;
+    --surface: #1E1B2E;
+    --surface-raised: #272238;
+    --gold: #F5B942;
+    --gold-dim: #C98F2E;
+    --magenta: #FF4D8D;
+    --text: #F2EFEA;
+    --text-dim: #9C97AE;
+    --text-faint: #6E698A;
+    --line: rgba(242,239,234,0.09);
+    --line-strong: rgba(242,239,234,0.16);
+    --radius: 14px;
+    --font-display: 'Anton', sans-serif;
+    --font-body: 'Work Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection{ background: var(--gold); color: var(--bg-deep); }
+  a{ color: inherit; }
+  button{ font-family: inherit; cursor: pointer; }
+
+  .wrap{ max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position: sticky; top:0; z-index: 50;
+    background: rgba(20,18,31,0.86);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px 32px;
+    max-width: 1180px; margin: 0 auto;
+  }
+  .logo{
+    font-family: var(--font-display);
+    font-size: 24px;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{ width:9px; height:9px; border-radius:50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+  .nav-right{ display:flex; align-items:center; gap:22px; }
+  .city-chip{
+    display:flex; align-items:center; gap:6px;
+    font-size: 13px; color: var(--text-dim);
+    border: 1px solid var(--line-strong); border-radius: 999px;
+    padding: 7px 14px;
+  }
+  .btn-signin{
+    background: transparent; color: var(--text);
+    border: 1px solid var(--line-strong); border-radius: 999px;
+    padding: 9px 18px; font-size: 13px; font-weight: 500;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .btn-signin:hover{ border-color: var(--gold); background: rgba(245,185,66,0.06); }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position: relative; margin: 28px 32px 0; max-width: 1180px;
+    margin-left:auto; margin-right:auto;
+    border-radius: 20px; overflow: hidden;
+    background: linear-gradient(120deg, #2A1F3D 0%, #1A1730 55%, #241933 100%);
+    padding: 56px 48px;
+    min-height: 300px;
+    display:flex; flex-direction:column; justify-content:flex-end;
+  }
+  .hero::before{
+    content:''; position:absolute; inset:0;
+    background:
+      radial-gradient(560px 320px at 82% 18%, rgba(255,77,141,0.20), transparent 65%),
+      radial-gradient(420px 260px at 10% 90%, rgba(245,185,66,0.14), transparent 65%);
+    pointer-events:none;
+  }
+  .marquee-frame{
+    position:absolute; inset:10px; border-radius: 14px;
+    border: 1.5px dashed transparent;
+    background-image: repeating-linear-gradient(90deg, var(--gold) 0 10px, transparent 10px 24px);
+    -webkit-mask: linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    padding: 1.5px;
+    opacity: 0.55;
+    animation: chase 14s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes chase{ from{ background-position: 0 0; } to{ background-position: 400px 0; } }
+  .hero-eyebrow{
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 14px;
+    position: relative; z-index:1;
+  }
+  .hero-title{
+    font-family: var(--font-display);
+    font-size: clamp(40px, 6vw, 76px);
+    line-height: 0.96; margin: 0 0 16px; letter-spacing: 0.01em;
+    position: relative; z-index:1;
+    max-width: 640px;
+  }
+  .hero-meta{
+    display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 26px;
+    position: relative; z-index:1;
+  }
+  .tag{
+    font-size: 12px; color: var(--text-dim);
+    border: 1px solid var(--line-strong); border-radius: 999px;
+    padding: 5px 12px;
+  }
+  .tag.rating{ color: var(--magenta); border-color: rgba(255,77,141,0.4); background: rgba(255,77,141,0.08); }
+  .hero-cta{
+    position: relative; z-index:1;
+    display:inline-flex; align-items:center; gap:10px;
+    background: var(--gold); color: #241a05;
+    border:none; border-radius: 10px;
+    font-weight: 600; font-size: 15px;
+    padding: 14px 26px;
+    transition: transform .15s ease, box-shadow .15s ease;
+    box-shadow: 0 0 0 rgba(245,185,66,0);
+    width: fit-content;
+  }
+  .hero-cta:hover{ transform: translateY(-2px); box-shadow: 0 10px 24px rgba(245,185,66,0.25); }
+
+  /* ---------- SECTION HEADERS + FILM STRIP DIVIDER ---------- */
+  .filmstrip{
+    height: 14px; margin: 46px 0 30px;
+    background-image: repeating-linear-gradient(90deg, var(--line-strong) 0 8px, transparent 8px 20px);
+    background-position: center; background-size: 20px 2px; background-repeat: repeat-x;
+    position: relative;
+  }
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom: 22px;
+  }
+  .section-title{ font-family: var(--font-display); font-size: 26px; letter-spacing: 0.01em; margin:0; }
+  .section-sub{ font-size: 13px; color: var(--text-faint); }
+
+  /* ---------- FILTER CHIPS ---------- */
+  .chips{ display:flex; gap:10px; margin-bottom: 26px; flex-wrap: wrap; }
+  .chip{
+    font-size: 13px; color: var(--text-dim);
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 999px; padding: 8px 16px;
+    transition: all .15s ease;
+  }
+  .chip.active{ color: #241a05; background: var(--gold); border-color: var(--gold); font-weight: 500; }
+  .chip:not(.active):hover{ border-color: var(--line-strong); color: var(--text); }
+
+  /* ---------- MOVIE GRID ---------- */
+  .grid{
+    display:grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 22px; margin-bottom: 8px;
+  }
+  .card{
+    background: var(--surface); border-radius: var(--radius); overflow: hidden;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .card:hover{ transform: translateY(-6px); border-color: var(--line-strong); box-shadow: 0 18px 34px rgba(0,0,0,0.35); }
+  .poster{
+    height: 240px; position: relative;
+    display:flex; align-items:flex-end; padding: 14px;
+  }
+  .poster .rating-badge{
+    position:absolute; top:12px; right:12px;
+    background: rgba(13,11,21,0.55); backdrop-filter: blur(4px);
+    color: var(--gold); font-family: var(--font-mono); font-size: 11px;
+    padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(245,185,66,0.35);
+  }
+  .poster-glyph{
+    font-family: var(--font-display); font-size: 46px; color: rgba(255,255,255,0.14);
+    position: absolute; bottom: 10px; left: 14px; line-height: 1;
+  }
+  .card-body{ padding: 14px 14px 16px; }
+  .card-title{ font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+  .card-sub{ font-size: 12px; color: var(--text-faint); margin:0; }
+
+  /* poster gradient variants */
+  .p1{ background: linear-gradient(150deg,#3A2350,#1D1430); }
+  .p2{ background: linear-gradient(150deg,#1E3A4A,#132030); }
+  .p3{ background: linear-gradient(150deg,#4A2323,#241213); }
+  .p4{ background: linear-gradient(150deg,#2E4023,#161f10); }
+  .p5{ background: linear-gradient(150deg,#402340,#1c1220); }
+  .p6{ background: linear-gradient(150deg,#403323,#201a10); }
+
+  /* ---------- BOOKING PANEL ---------- */
+  .panel{
+    display:none;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 20px; padding: 32px; margin: 40px 0 60px;
+  }
+  .panel.open{ display:block; animation: rise .35s ease; }
+  @keyframes rise{ from{ opacity:0; transform: translateY(14px);} to{ opacity:1; transform: translateY(0);} }
+  .panel-head{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 24px; }
+  .panel-title{ font-family: var(--font-display); font-size: 24px; margin: 0 0 6px; }
+  .panel-sub{ font-size: 13px; color: var(--text-faint); }
+  .close-x{
+    background: none; border: 1px solid var(--line-strong); color: var(--text-dim);
+    width: 34px; height: 34px; border-radius: 50%; font-size: 16px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .close-x:hover{ color: var(--text); border-color: var(--gold); }
+
+  .step-label{ font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--gold); text-transform: uppercase; margin: 0 0 12px; }
+
+  .cinema-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 16px 0; border-bottom: 1px solid var(--line);
+  }
+  .cinema-name{ font-weight: 600; font-size: 14px; margin: 0 0 4px; }
+  .cinema-loc{ font-size: 12px; color: var(--text-faint); }
+  .times{ display:flex; gap:8px; flex-wrap: wrap; }
+  .time-chip{
+    font-family: var(--font-mono); font-size: 12px;
+    background: var(--surface-raised); border: 1px solid var(--line);
+    border-radius: 8px; padding: 8px 12px; color: var(--text-dim);
+    transition: all .15s ease;
+  }
+  .time-chip:hover{ border-color: var(--gold); color: var(--gold); }
+  .time-chip.selected{ background: var(--gold); color: #241a05; border-color: var(--gold); font-weight: 500; }
+
+  /* seat map */
+  .stage-wrap{ text-align:center; margin: 8px 0 28px; }
+  .stage-curve{ width: 100%; max-width: 460px; height: 30px; margin: 0 auto; }
+  .stage-label{ font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; color: var(--text-faint); margin-top: 2px; }
+
+  .seat-map{ display:flex; flex-direction:column; align-items:center; gap: 9px; margin-bottom: 26px; }
+  .seat-row{ display:flex; align-items:center; gap: 7px; }
+  .row-label{ width:16px; text-align:right; font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+  .seat{
+    width: 24px; height: 24px; border-radius: 6px 6px 8px 8px;
+    background: var(--surface-raised); border: 1px solid var(--line-strong);
+    transition: all .12s ease;
+  }
+  .seat.available:hover{ border-color: var(--gold); transform: translateY(-2px); }
+  .seat.selected{ background: var(--gold); border-color: var(--gold); box-shadow: 0 0 12px rgba(245,185,66,0.5); animation: pop .2s ease; }
+  .seat.booked{ background: transparent; border-color: var(--line); opacity: 0.3; cursor: not-allowed; }
+  @keyframes pop{ 0%{ transform: scale(0.7);} 60%{ transform: scale(1.15);} 100%{ transform: scale(1);} }
+  .aisle{ width: 16px; }
+
+  .legend{ display:flex; gap:20px; justify-content:center; font-size:12px; color: var(--text-dim); margin-bottom: 30px; }
+  .legend span{ display:flex; align-items:center; gap:6px; }
+  .swatch{ width:12px; height:12px; border-radius: 4px; }
+  .sw-avail{ background: var(--surface-raised); border: 1px solid var(--line-strong); }
+  .sw-selected{ background: var(--gold); }
+  .sw-booked{ background: transparent; border: 1px solid var(--line); opacity: 0.5; }
+
+  .summary-bar{
+    display:flex; justify-content:space-between; align-items:center;
+    border-top: 1px solid var(--line); padding-top: 20px;
+  }
+  .summary-text{ font-size: 13px; color: var(--text-dim); }
+  .summary-total{ font-family: var(--font-display); font-size: 26px; margin-top: 2px; }
+  .btn-primary{
+    background: var(--gold); color: #241a05; border: none;
+    border-radius: 10px; padding: 14px 28px; font-weight: 600; font-size: 14px;
+    transition: opacity .15s ease, transform .15s ease;
+  }
+  .btn-primary:disabled{ opacity: 0.35; pointer-events: none; }
+  .btn-primary:not(:disabled):hover{ transform: translateY(-2px); }
+
+  /* ---------- CONFIRMATION / TICKET STUB ---------- */
+  .overlay{
+    display:none; position: fixed; inset:0; z-index: 100;
+    background: rgba(10,9,16,0.72); backdrop-filter: blur(4px);
+    align-items:center; justify-content:center; padding: 24px;
+  }
+  .overlay.open{ display:flex; animation: fadeIn .2s ease; }
+  @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+
+  .ticket{
+    width: 100%; max-width: 420px;
+    background: var(--surface-raised);
+    border-radius: 18px;
+    position: relative;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    transform: scale(0.85) translateY(30px) rotate(-2deg);
+    opacity: 0;
+    animation: ticketIn .5s cubic-bezier(.2,.9,.3,1.3) forwards;
+  }
+  @keyframes ticketIn{ to{ transform: scale(1) translateY(0) rotate(0deg); opacity:1; } }
+
+  .ticket-top{ padding: 26px 26px 20px; }
+  .ticket-brand{ display:flex; align-items:center; gap:8px; margin-bottom: 18px; }
+  .ticket-brand .dot{ width:8px; height:8px; border-radius:50%; background: var(--gold); }
+  .ticket-brand span{ font-family: var(--font-display); font-size: 15px; letter-spacing: 0.02em; }
+  .ticket-movie{ font-family: var(--font-display); font-size: 26px; margin: 0 0 4px; }
+  .ticket-sub{ font-size: 12px; color: var(--text-faint); margin-bottom: 18px; }
+  .ticket-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .ticket-field{ }
+  .ticket-field label{ display:block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 4px; }
+  .ticket-field div{ font-size: 14px; font-weight: 500; }
+
+  .perforation{
+    position: relative; height: 0;
+  }
+  .perforation::before{
+    content:''; position:absolute; left:0; right:0; top:-1px;
+    border-top: 1.5px dashed var(--line-strong);
+  }
+  .perf-hole{
+    position:absolute; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--bg); top: -11px;
+  }
+  .perf-hole.left{ left: -11px; }
+  .perf-hole.right{ right: -11px; }
+
+  .ticket-bottom{ padding: 20px 26px 26px; display:flex; align-items:center; justify-content:space-between; gap: 14px; }
+  .qr{
+    width: 64px; height: 64px; border-radius: 8px; flex-shrink:0;
+    background:
+      linear-gradient(90deg, #241a05 0 6px, transparent 6px 12px) repeat-x,
+      linear-gradient(0deg, #241a05 0 6px, transparent 6px 12px) repeat-y;
+    background-color: var(--gold);
+    background-size: 12px 100%, 100% 12px;
+  }
+  .ticket-id{ font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+  .ticket-status{ font-size: 12px; color: #7FD98A; font-weight: 500; margin-top: 4px; }
+  .ticket-close{
+    display:block; margin: 18px auto 0; background: none; border: none;
+    color: var(--text-faint); font-size: 13px; text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ---------- AUTH MODAL ---------- */
+  .auth-overlay{
+    display:none; position: fixed; inset:0; z-index: 200;
+    background: rgba(10,9,16,0.78); backdrop-filter: blur(4px);
+    align-items:center; justify-content:center; padding: 20px;
+  }
+  .auth-overlay.open{ display:flex; animation: fadeIn .2s ease; }
+
+  .auth-card{
+    width: 100%; max-width: 860px; min-height: 520px;
+    background: var(--surface); border-radius: 22px; overflow: hidden;
+    display:grid; grid-template-columns: 1fr 1fr;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.55);
+    position: relative;
+    transform: scale(0.92) translateY(20px); opacity: 0;
+    animation: authIn .4s cubic-bezier(.2,.8,.3,1.15) forwards;
+  }
+  @keyframes authIn{ to{ transform: scale(1) translateY(0); opacity: 1; } }
+
+  .auth-close{
+    position:absolute; top:18px; right:18px; z-index: 5;
+    background: rgba(13,11,21,0.4); border: 1px solid var(--line-strong);
+    color: var(--text); width: 34px; height: 34px; border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .auth-close:hover{ border-color: var(--gold); }
+
+  .auth-visual{
+    position: relative; overflow: hidden;
+    background: linear-gradient(155deg, #2A1F3D 0%, #1A1730 50%, #24152E 100%);
+    padding: 44px 38px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .auth-visual::before{
+    content:''; position:absolute; inset:0;
+    background:
+      radial-gradient(420px 300px at 85% 15%, rgba(255,77,141,0.22), transparent 60%),
+      radial-gradient(360px 260px at 10% 95%, rgba(245,185,66,0.16), transparent 60%);
+  }
+  .auth-visual-top{ position: relative; z-index:1; }
+  .auth-visual .logo{ margin-bottom: 40px; }
+  .auth-visual-title{
+    font-family: var(--font-display); font-size: 34px; line-height: 1.02;
+    margin: 0 0 12px; max-width: 280px;
+  }
+  .auth-visual-sub{ font-size: 14px; color: var(--text-dim); max-width: 260px; }
+
+  .floating-stub{
+    position: relative; z-index: 1;
+    background: rgba(20,18,31,0.55); border: 1px solid var(--line-strong);
+    border-radius: 12px; padding: 14px 16px;
+    display:flex; align-items:center; gap: 12px;
+    backdrop-filter: blur(6px);
+    animation: floaty 4.5s ease-in-out infinite;
+  }
+  @keyframes floaty{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-8px);} }
+  .floating-stub .fs-icon{
+    width: 34px; height: 34px; border-radius: 8px; background: var(--gold);
+    display:flex; align-items:center; justify-content:center; color:#241a05; font-size:16px; flex-shrink:0;
+  }
+  .floating-stub .fs-title{ font-size: 13px; font-weight: 600; margin:0; }
+  .floating-stub .fs-sub{ font-size: 11px; color: var(--text-faint); margin: 2px 0 0; font-family: var(--font-mono); }
+
+  .auth-form-side{ padding: 44px 40px; display:flex; flex-direction:column; }
+  .auth-tabs{ display:flex; gap: 6px; background: var(--surface-raised); border-radius: 10px; padding: 4px; margin-bottom: 28px; }
+  .auth-tab{
+    flex:1; text-align:center; padding: 9px 0; border-radius: 8px; font-size: 13px; font-weight: 500;
+    background: none; border: none; color: var(--text-faint);
+    transition: all .2s ease;
+  }
+  .auth-tab.active{ background: var(--gold); color: #241a05; }
+
+  .auth-heading{ font-family: var(--font-display); font-size: 24px; margin: 0 0 6px; }
+  .auth-subheading{ font-size: 13px; color: var(--text-faint); margin-bottom: 26px; }
+
+  .field{ position: relative; margin-bottom: 18px; }
+  .field input{
+    width: 100%; background: var(--surface-raised); border: 1px solid var(--line-strong);
+    border-radius: 10px; padding: 18px 14px 8px; font-size: 14px; color: var(--text);
+    font-family: var(--font-body); outline: none;
+    transition: border-color .15s ease;
+  }
+  .field input:focus{ border-color: var(--gold); }
+  .field label{
+    position:absolute; left: 14px; top: 14px; font-size: 14px; color: var(--text-faint);
+    pointer-events: none; transition: all .15s ease;
+  }
+  .field input:focus + label,
+  .field input.filled + label{
+    top: 7px; font-size: 10px; letter-spacing: 0.04em; color: var(--gold);
+  }
+  .field-icon-btn{
+    position:absolute; right: 12px; top: 14px; background: none; border: none;
+    color: var(--text-faint); font-size: 16px;
+  }
+  .field-icon-btn:hover{ color: var(--text); }
+
+  .field-error{ font-size: 11px; color: var(--magenta); margin: -12px 0 14px; display:none; }
+  .field-error.show{ display:block; }
+
+  .auth-row{ display:flex; justify-content:space-between; align-items:center; font-size: 12px; color: var(--text-faint); margin-bottom: 22px; }
+  .auth-row a{ color: var(--gold); text-decoration: none; }
+
+  .btn-auth-submit{
+    background: var(--gold); color: #241a05; border:none; border-radius: 10px;
+    padding: 14px; font-weight: 600; font-size: 14px; width: 100%;
+    transition: transform .15s ease, box-shadow .15s ease;
+    display:flex; align-items:center; justify-content:center; gap: 8px;
+  }
+  .btn-auth-submit:hover{ transform: translateY(-2px); box-shadow: 0 10px 24px rgba(245,185,66,0.22); }
+  .btn-auth-submit.loading .btn-label{ opacity: 0; }
+  .btn-auth-submit{ position: relative; }
+  .spinner{
+    display:none; position:absolute; width:18px; height:18px;
+    border: 2px solid rgba(36,26,5,0.3); border-top-color: #241a05; border-radius: 50%;
+    animation: spin .6s linear infinite;
+  }
+  .btn-auth-submit.loading .spinner{ display:block; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .divider{ display:flex; align-items:center; gap: 12px; margin: 22px 0; font-size: 11px; color: var(--text-faint); }
+  .divider::before, .divider::after{ content:''; flex:1; height:1px; background: var(--line); }
+
+  .social-row{ display:flex; gap: 10px; }
+  .btn-social{
+    flex:1; display:flex; align-items:center; justify-content:center; gap: 8px;
+    background: var(--surface-raised); border: 1px solid var(--line-strong);
+    border-radius: 10px; padding: 11px; font-size: 13px; color: var(--text);
+    transition: border-color .15s ease;
+  }
+  .btn-social:hover{ border-color: var(--gold); }
+
+  .auth-switch{ margin-top: auto; padding-top: 20px; text-align:center; font-size: 13px; color: var(--text-faint); }
+  .auth-switch button{ background:none; border:none; color: var(--gold); font-weight: 500; font-size: 13px; }
+
+  .auth-forms{ position: relative; flex:1; }
+  .auth-form-panel{ display:none; }
+  .auth-form-panel.active{ display:block; animation: slideIn .3s ease; }
+  @keyframes slideIn{ from{ opacity:0; transform: translateX(12px);} to{ opacity:1; transform: translateX(0);} }
+
+  .toast{
+    position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-20px);
+    background: var(--surface-raised); border: 1px solid var(--line-strong);
+    border-radius: 10px; padding: 12px 20px; font-size: 13px;
+    display:flex; align-items:center; gap: 10px;
+    z-index: 300; opacity: 0; pointer-events: none;
+    transition: all .3s ease;
+  }
+  .toast.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast i{ color: #7FD98A; }
+
+  .user-chip{
+    display:none; align-items:center; gap: 8px;
+    border: 1px solid var(--line-strong); border-radius: 999px; padding: 5px 14px 5px 5px;
+    font-size: 13px; font-weight: 500;
+  }
+  .user-chip .avatar{
+    width: 26px; height: 26px; border-radius: 50%; background: var(--gold);
+    color: #241a05; display:flex; align-items:center; justify-content:center;
+    font-size: 11px; font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo"><span class="dot"></span>REELHOUSE</div>
+    <div class="nav-right">
+      <div class="city-chip"><i class="ti ti-map-pin"></i> Kanpur</div>
+      <button class="btn-signin" id="nav-auth-btn" onclick="openAuth('signin')">Sign in</button>
+      <div class="user-chip" id="user-chip"><span class="avatar" id="user-avatar">—</span><span id="user-name">—</span></div>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="marquee-frame"></div>
+  <p class="hero-eyebrow">Now booking &middot; Screen 4, 8:15 PM</p>
+  <h1 class="hero-title">Nine Nights<br>in November</h1>
+  <div class="hero-meta">
+    <span class="tag rating">★ 8.4</span>
+    <span class="tag">Thriller</span>
+    <span class="tag">2h 11m</span>
+    <span class="tag">UA</span>
+  </div>
+  <button class="hero-cta" onclick="openMovie('m1')">Book tickets <i class="ti ti-arrow-right"></i></button>
+</div>
+
+<div class="wrap">
+  <div class="filmstrip"></div>
+
+  <div class="section-head">
+    <div>
+      <h2 class="section-title">Now showing</h2>
+      <p class="section-sub">Pick a film to see showtimes near you</p>
+    </div>
+  </div>
+
+  <div class="chips">
+    <span class="chip active">All</span>
+    <span class="chip">Thriller</span>
+    <span class="chip">Drama</span>
+    <span class="chip">Comedy</span>
+    <span class="chip">Animated</span>
+    <span class="chip">Action</span>
+  </div>
+
+  <div class="grid" id="movie-grid"></div>
+
+  <div class="panel" id="booking-panel">
+    <div class="panel-head">
+      <div>
+        <p class="panel-title" id="panel-movie-title">—</p>
+        <p class="panel-sub" id="panel-movie-sub">—</p>
+      </div>
+      <button class="close-x" onclick="closePanel()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <div id="step-showtime">
+      <p class="step-label">Step 1 — Choose cinema and time</p>
+      <div id="cinema-list"></div>
+    </div>
+
+    <div id="step-seats" style="display:none; margin-top: 28px;">
+      <p class="step-label">Step 2 — Choose your seats</p>
+      <div class="stage-wrap">
+        <svg class="stage-curve" viewBox="0 0 400 30">
+          <path d="M 20 28 Q 200 -6 380 28" fill="none" stroke="var(--line-strong)" stroke-width="2"/>
+        </svg>
+        <p class="stage-label">SCREEN</p>
+      </div>
+      <div class="seat-map" id="seat-map"></div>
+      <div class="legend">
+        <span><span class="swatch sw-avail"></span>Available</span>
+        <span><span class="swatch sw-selected"></span>Selected</span>
+        <span><span class="swatch sw-booked"></span>Booked</span>
+      </div>
+      <div class="summary-bar">
+        <div>
+          <p class="summary-text" id="seat-summary">No seats selected</p>
+          <p class="summary-total" id="seat-total">₹0</p>
+        </div>
+        <button class="btn-primary" id="pay-btn" disabled onclick="confirmBooking()">Proceed to pay</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ticket-overlay">
+  <div class="ticket" id="ticket-card">
+    <div class="ticket-top">
+      <div class="ticket-brand"><span class="dot"></span><span>REELHOUSE</span></div>
+      <p class="ticket-movie" id="tk-movie">—</p>
+      <p class="ticket-sub" id="tk-sub">—</p>
+      <div class="ticket-grid">
+        <div class="ticket-field"><label>Seats</label><div id="tk-seats">—</div></div>
+        <div class="ticket-field"><label>Amount paid</label><div id="tk-amount">—</div></div>
+      </div>
+    </div>
+    <div class="perforation">
+      <div class="perf-hole left"></div>
+      <div class="perf-hole right"></div>
+    </div>
+    <div class="ticket-bottom">
+      <div>
+        <p class="ticket-id" id="tk-id">BOOKING #—</p>
+        <p class="ticket-status"><i class="ti ti-check"></i> Confirmed</p>
+      </div>
+      <div class="qr"></div>
+    </div>
+  </div>
+</div>
+<button class="ticket-close" id="ticket-close-btn" onclick="closeTicket()" style="display:none;">Close</button>
+
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-card">
+    <button class="auth-close" onclick="closeAuth()"><i class="ti ti-x"></i></button>
+
+    <div class="auth-visual">
+      <div class="auth-visual-top">
+        <div class="logo"><span class="dot"></span>REELHOUSE</div>
+        <p class="auth-visual-title">Skip the queue. Own the front row.</p>
+        <p class="auth-visual-sub">Save your seats, get showtime reminders, and check out in one tap next time.</p>
+      </div>
+      <div class="floating-stub">
+        <div class="fs-icon"><i class="ti ti-ticket"></i></div>
+        <div>
+          <p class="fs-title">Nine Nights in November</p>
+          <p class="fs-sub">D4, D5 · 8:15 PM</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-form-side">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')">Sign in</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Create account</button>
+      </div>
+
+      <div class="auth-forms">
+        <div class="auth-form-panel active" id="panel-signin">
+          <p class="auth-heading">Welcome back</p>
+          <p class="auth-subheading">Sign in to pick up right where you left off.</p>
+
+          <div class="field">
+            <input type="email" id="si-email" oninput="markFilled(this)">
+            <label for="si-email">Email</label>
+          </div>
+          <div class="field">
+            <input type="password" id="si-password" oninput="markFilled(this)">
+            <label for="si-password">Password</label>
+            <button class="field-icon-btn" onclick="togglePw('si-password', this)"><i class="ti ti-eye"></i></button>
+          </div>
+          <p class="field-error" id="si-error">That email and password don't match. Try again.</p>
+
+          <div class="auth-row">
+            <label style="display:flex; align-items:center; gap:6px;"><input type="checkbox" style="accent-color: var(--gold);"> Keep me signed in</label>
+            <a href="#" onclick="return false;">Forgot password?</a>
+          </div>
+
+          <button class="btn-auth-submit" id="signin-submit" onclick="submitAuth('signin')">
+            <span class="spinner"></span><span class="btn-label">Sign in</span>
+          </button>
+
+          <div class="divider">or continue with</div>
+          <div class="social-row">
+            <button class="btn-social" onclick="socialAuth('Google')"><i class="ti ti-brand-google"></i> Google</button>
+            <button class="btn-social" onclick="socialAuth('Apple')"><i class="ti ti-brand-apple"></i> Apple</button>
+          </div>
+
+          <div class="auth-switch">New to Reelhouse? <button onclick="switchAuthTab('signup')">Create an account</button></div>
+        </div>
+
+        <div class="auth-form-panel" id="panel-signup">
+          <p class="auth-heading">Create your account</p>
+          <p class="auth-subheading">Takes less time than the trailers do.</p>
+
+          <div class="field">
+            <input type="text" id="su-name" oninput="markFilled(this)">
+            <label for="su-name">Full name</label>
+          </div>
+          <div class="field">
+            <input type="email" id="su-email" oninput="markFilled(this)">
+            <label for="su-email">Email</label>
+          </div>
+          <div class="field">
+            <input type="password" id="su-password" oninput="markFilled(this); checkStrength()">
+            <label for="su-password">Password</label>
+            <button class="field-icon-btn" onclick="togglePw('su-password', this)"><i class="ti ti-eye"></i></button>
+          </div>
+          <p class="field-error" id="su-error">Password needs at least 8 characters.</p>
+
+          <button class="btn-auth-submit" id="signup-submit" onclick="submitAuth('signup')">
+            <span class="spinner"></span><span class="btn-label">Create account</span>
+          </button>
+
+          <div class="divider">or continue with</div>
+          <div class="social-row">
+            <button class="btn-social" onclick="socialAuth('Google')"><i class="ti ti-brand-google"></i> Google</button>
+            <button class="btn-social" onclick="socialAuth('Apple')"><i class="ti ti-brand-apple"></i> Apple</button>
+          </div>
+
+          <div class="auth-switch">Already have an account? <button onclick="switchAuthTab('signin')">Sign in</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <i class="ti ti-circle-check"></i><span id="toast-text">Signed in</span>
+</div>
+
+<script>
+const MOVIES = [
+  { id:'m1', title:'Nine Nights in November', genre:'Thriller', lang:'English', rating:'8.4', poster:'p1' },
+  { id:'m2', title:'The Cartographer', genre:'Drama', lang:'English', rating:'7.9', poster:'p2' },
+  { id:'m3', title:'Paper Lanterns', genre:'Animated', lang:'Hindi', rating:'8.1', poster:'p3' },
+  { id:'m4', title:'Low Tide', genre:'Thriller', lang:'English', rating:'7.6', poster:'p4' },
+  { id:'m5', title:'Two Left Shoes', genre:'Comedy', lang:'Hindi', rating:'7.2', poster:'p5' },
+  { id:'m6', title:'Iron Meridian', genre:'Action', lang:'English', rating:'8.6', poster:'p6' },
+];
+
+const CINEMAS = [
+  { name:'Galaxy Multiplex', loc:'City Centre, 2.1 km', times:['1:30 PM','4:45 PM','8:15 PM'] },
+  { name:'Orbit Cinemas', loc:'Riverside Mall, 4.6 km', times:['2:00 PM','7:00 PM'] },
+  { name:'Lumen Screens', loc:'Old Town, 6.3 km', times:['11:15 AM','5:30 PM','9:45 PM'] },
+];
+
+const grid = document.getElementById('movie-grid');
+MOVIES.forEach(m => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.onclick = () => openMovie(m.id);
+  card.innerHTML = `
+    <div class="poster ${m.poster}">
+      <span class="rating-badge">★ ${m.rating}</span>
+      <span class="poster-glyph">${m.title.charAt(0)}</span>
+    </div>
+    <div class="card-body">
+      <p class="card-title">${m.title}</p>
+      <p class="card-sub">${m.genre} &middot; ${m.lang}</p>
+    </div>`;
+  grid.appendChild(card);
+});
+
+let currentMovie = null;
+let currentCinema = null;
+let currentTime = null;
+let selectedSeats = [];
+const SEAT_PRICE = 260;
+
+function openMovie(id){
+  currentMovie = MOVIES.find(m => m.id === id);
+  document.getElementById('panel-movie-title').textContent = currentMovie.title;
+  document.getElementById('panel-movie-sub').textContent = `${currentMovie.genre} · ${currentMovie.lang} · ★ ${currentMovie.rating}`;
+
+  const list = document.getElementById('cinema-list');
+  list.innerHTML = '';
+  CINEMAS.forEach((c, ci) => {
+    const row = document.createElement('div');
+    row.className = 'cinema-row';
+    const timesHtml = c.times.map((t, ti) =>
+      `<span class="time-chip" onclick="pickTime(${ci},${ti},this)">${t}</span>`
+    ).join('');
+    row.innerHTML = `
+      <div>
+        <p class="cinema-name">${c.name}</p>
+        <p class="cinema-loc">${c.loc}</p>
+      </div>
+      <div class="times">${timesHtml}</div>`;
+    list.appendChild(row);
+  });
+
+  document.getElementById('step-showtime').style.display = 'block';
+  document.getElementById('step-seats').style.display = 'none';
+  document.getElementById('booking-panel').classList.add('open');
+  document.getElementById('booking-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function pickTime(cinemaIndex, timeIndex, el){
+  document.querySelectorAll('.time-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  currentCinema = CINEMAS[cinemaIndex];
+  currentTime = currentCinema.times[timeIndex];
+  buildSeatMap();
+  document.getElementById('step-seats').style.display = 'block';
+}
+
+function buildSeatMap(){
+  selectedSeats = [];
+  const rows = [
+    { label:'A', count:6, booked:[3] },
+    { label:'B', count:8, booked:[2,6] },
+    { label:'C', count:8, booked:[] },
+    { label:'D', count:10, booked:[4,5,9] },
+  ];
+  const map = document.getElementById('seat-map');
+  map.innerHTML = '';
+  rows.forEach(row => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'seat-row';
+    const label = document.createElement('span');
+    label.className = 'row-label';
+    label.textContent = row.label;
+    rowEl.appendChild(label);
+
+    for(let i=0; i<row.count; i++){
+      const seat = document.createElement('button');
+      const isBooked = row.booked.includes(i);
+      seat.className = 'seat ' + (isBooked ? 'booked' : 'available');
+      seat.setAttribute('aria-label', `Seat ${row.label}${i+1}, ${isBooked ? 'booked' : 'available'}`);
+      seat.dataset.seatId = `${row.label}${i+1}`;
+      if(!isBooked){
+        seat.onclick = () => toggleSeat(seat);
+      }
+      rowEl.appendChild(seat);
+      if(i === Math.floor(row.count/2) - 1){
+        const aisle = document.createElement('span');
+        aisle.className = 'aisle';
+        rowEl.appendChild(aisle);
+      }
+    }
+    map.appendChild(rowEl);
+  });
+  updateSummary();
+}
+
+function toggleSeat(seat){
+  const id = seat.dataset.seatId;
+  if(seat.classList.contains('selected')){
+    seat.classList.remove('selected');
+    seat.classList.add('available');
+    selectedSeats = selectedSeats.filter(s => s !== id);
+  } else {
+    seat.classList.remove('available');
+    seat.classList.add('selected');
+    selectedSeats.push(id);
+  }
+  updateSummary();
+}
+
+function updateSummary(){
+  const summary = document.getElementById('seat-summary');
+  const total = document.getElementById('seat-total');
+  const btn = document.getElementById('pay-btn');
+  const n = selectedSeats.length;
+  if(n === 0){
+    summary.textContent = 'No seats selected';
+    total.textContent = '₹0';
+    btn.disabled = true;
+  } else {
+    summary.textContent = `${n} seat${n>1?'s':''} · ${selectedSeats.slice().sort().join(', ')}`;
+    total.textContent = '₹' + (n * SEAT_PRICE).toLocaleString('en-IN');
+    btn.disabled = false;
+  }
+}
+
+function closePanel(){
+  document.getElementById('booking-panel').classList.remove('open');
+}
+
+function confirmBooking(){
+  const bookingId = 'RH' + Math.floor(100000 + Math.random()*900000);
+  document.getElementById('tk-movie').textContent = currentMovie.title;
+  document.getElementById('tk-sub').textContent = `${currentCinema.name} · ${currentTime}`;
+  document.getElementById('tk-seats').textContent = selectedSeats.slice().sort().join(', ');
+  document.getElementById('tk-amount').textContent = '₹' + (selectedSeats.length * SEAT_PRICE).toLocaleString('en-IN');
+  document.getElementById('tk-id').textContent = 'BOOKING #' + bookingId;
+
+  const card = document.getElementById('ticket-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = '';
+
+  document.getElementById('ticket-overlay').classList.add('open');
+  document.getElementById('ticket-close-btn').style.display = 'block';
+}
+
+function closeTicket(){
+  document.getElementById('ticket-overlay').classList.remove('open');
+  document.getElementById('ticket-close-btn').style.display = 'none';
+  closePanel();
+}
+
+function openAuth(mode){
+  document.getElementById('auth-overlay').classList.add('open');
+  switchAuthTab(mode || 'signin');
+}
+function closeAuth(){
+  document.getElementById('auth-overlay').classList.remove('open');
+}
+function switchAuthTab(mode){
+  document.getElementById('tab-signin').classList.toggle('active', mode === 'signin');
+  document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+  document.getElementById('panel-signin').classList.toggle('active', mode === 'signin');
+  document.getElementById('panel-signup').classList.toggle('active', mode === 'signup');
+}
+function markFilled(el){
+  el.classList.toggle('filled', el.value.length > 0);
+}
+function togglePw(id, btn){
+  const input = document.getElementById(id);
+  const isPw = input.type === 'password';
+  input.type = isPw ? 'text' : 'password';
+  btn.innerHTML = isPw ? '<i class="ti ti-eye-off"></i>' : '<i class="ti ti-eye"></i>';
+}
+function checkStrength(){
+  const pw = document.getElementById('su-password').value;
+  const err = document.getElementById('su-error');
+  err.classList.toggle('show', pw.length > 0 && pw.length < 8);
+}
+
+function submitAuth(mode){
+  if(mode === 'signin'){
+    const email = document.getElementById('si-email').value.trim();
+    const pw = document.getElementById('si-password').value;
+    const err = document.getElementById('si-error');
+    if(!email || !pw){
+      err.textContent = "Enter your email and password to continue.";
+      err.classList.add('show');
+      return;
+    }
+    err.classList.remove('show');
+    runFakeAuth('signin-submit', () => {
+      finishAuth(email.split('@')[0]);
+      showToast('Signed in');
+    });
+  } else {
+    const name = document.getElementById('su-name').value.trim();
+    const email = document.getElementById('su-email').value.trim();
+    const pw = document.getElementById('su-password').value;
+    const err = document.getElementById('su-error');
+    if(!name || !email || pw.length < 8){
+      err.textContent = pw.length < 8 && name && email ? "Password needs at least 8 characters." : "Fill in every field to create your account.";
+      err.classList.add('show');
+      return;
+    }
+    err.classList.remove('show');
+    runFakeAuth('signup-submit', () => {
+      finishAuth(name.split(' ')[0]);
+      showToast('Account created');
+    });
+  }
+}
+
+function runFakeAuth(btnId, onDone){
+  const btn = document.getElementById(btnId);
+  btn.classList.add('loading');
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    onDone();
+  }, 900);
+}
+
+function socialAuth(provider){
+  showToast('Continuing with ' + provider + '…');
+  setTimeout(() => finishAuth(provider + ' user'), 700);
+}
+
+function finishAuth(name){
+  closeAuth();
+  document.getElementById('nav-auth-btn').style.display = 'none';
+  const chip = document.getElementById('user-chip');
+  chip.style.display = 'flex';
+  document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('user-name').textContent = name;
+}
+
+let toastTimer;
+function showToast(text){
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = text;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+</script>
+</body>
+</html>
